@@ -1,9 +1,12 @@
 import 'package:cal/date_time_picker.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:uuid/uuid.dart';
 
 class Event extends StatefulWidget {
   static final String tag = '\Event';
+
   @override
   _EventState createState() => _EventState();
 }
@@ -12,10 +15,12 @@ class _EventState extends State<Event> {
   bool allDay = false;
   DateTime _startDate;
   TimeOfDay _startTime;
-  DateTime _endDate; 
+  DateTime _endDate;
   TimeOfDay _endTime;
   DateTime _start;
   DateTime _end;
+  TextEditingController controllerTitle = TextEditingController();
+  TextEditingController controllerDescription = TextEditingController();
 
   @override
   void initState() {
@@ -25,17 +30,25 @@ class _EventState extends State<Event> {
     _endDate = DateTime.now().add(Duration(hours: 1));
     _startTime = TimeOfDay(hour: _startDate.hour, minute: _startDate.minute);
     _endTime = TimeOfDay(hour: _endDate.hour, minute: _endDate.minute);
+    _start = _combineDateWithTime(date: _startDate, time: _startTime);
+    _end = _combineDateWithTime(date: _endDate, time: _endTime);
+  }
+
+  void _saveEvent() {
+    final eventId = Uuid().v4();
+    Firestore.instance.collection("events").document(eventId).setData({
+    'eventId': eventId,
+    'title': controllerTitle.text,
+    'description':controllerDescription.text,
+    'startDate': Timestamp.fromDate(_start),
+    'endDate':Timestamp.fromDate(_end),
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {},
-        ),
-      ),
+      appBar: AppBar(),
       body: SingleChildScrollView(
         child: Form(
           child: Padding(
@@ -43,6 +56,7 @@ class _EventState extends State<Event> {
             child: Column(
               children: [
                 new TextFormField(
+                  controller: controllerTitle,
                   decoration: InputDecoration(
                     labelText: 'Title',
                     border: OutlineInputBorder(),
@@ -63,7 +77,9 @@ class _EventState extends State<Event> {
                 new SwitchListTile(
                   value: allDay,
                   onChanged: (value) {
-                    allDay = value;
+                    setState(() {
+                      allDay = value;
+                    });
                   },
                   title: Text('All Day'),
                 ),
@@ -98,17 +114,21 @@ class _EventState extends State<Event> {
                   selectDate: (DateTime date) {
                     setState(() {
                       _endDate = date;
-                      _end = _combineDateWithTime(
-                          date: _endDate, time: _endTime);
+                      _end =
+                          _combineDateWithTime(date: _endDate, time: _endTime);
                     });
                   },
                   selectTime: (TimeOfDay time) {
                     setState(() {
                       _endTime = time;
-                      _end = _combineDateWithTime(
-                          date: _endDate, time: _endTime);                      
+                      _end =
+                          _combineDateWithTime(date: _endDate, time: _endTime);
                     });
                   },
+                ),
+                RaisedButton(
+                  onPressed: _saveEvent,
+                  child: Text('Save'),
                 ),
               ],
             ),
@@ -125,7 +145,7 @@ class _EventState extends State<Event> {
   }) {
     if (date == null && time == null) return null;
     final dateWithoutTime =
-        DateTime.parse(DateFormat("y-MM-dd 00:00:00").format(date));
+    DateTime.parse(DateFormat("y-MM-dd 00:00:00").format(date));
     return dateWithoutTime
         .add(Duration(hours: time.hour, minutes: time.minute));
   }

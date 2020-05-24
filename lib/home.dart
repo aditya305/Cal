@@ -1,5 +1,3 @@
-
-import 'package:cal/EventPage.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -25,35 +23,36 @@ class _HomeState extends State<Home> {
         title: Text('Calendar'),
       ),
       body: SingleChildScrollView(
-          child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          TableCalendar(
-            calendarStyle: CalendarStyle(
-              todayColor: Colors.blue,
-              selectedColor: Colors.green,
-              todayStyle: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 17.0,
-                color: Colors.white,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            TableCalendar(
+              calendarStyle: CalendarStyle(
+                todayColor: Colors.blue,
+                selectedColor: Colors.green,
+                todayStyle: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 17.0,
+                  color: Colors.white,
+                ),
               ),
-            ),
-            headerStyle: HeaderStyle(
-              centerHeaderTitle: true,
-              formatButtonDecoration: BoxDecoration(
-                color: Colors.lightBlue,
-                borderRadius: BorderRadius.circular(20),
+              headerStyle: HeaderStyle(
+                centerHeaderTitle: true,
+                formatButtonDecoration: BoxDecoration(
+                  color: Colors.lightBlue,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                formatButtonTextStyle: TextStyle(color: Colors.white),
               ),
-              formatButtonTextStyle: TextStyle(color: Colors.white),
+              calendarController: _controller,
             ),
-            calendarController: _controller,
-          ),
-        ],
-      ),),
+          ],
+        ),
+      ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
-         Navigator.of(context).pushReplacementNamed('\Event');
+          Navigator.of(context).pushNamed('\Event');
         },
       ),
     );
