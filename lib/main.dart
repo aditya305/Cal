@@ -1,3 +1,4 @@
+import 'package:cal/EventPage.dart';
 import 'package:cal/home.dart';
 import 'package:flutter/material.dart';
 
@@ -11,6 +12,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Calendar',
       home: Home(),
+      routes: {
+        Home.tag: (context) => Home(),
+        Event.tag: (context) => Event(),
+      },
     );
   }
 }

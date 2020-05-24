@@ -1,7 +1,10 @@
+
+import 'package:cal/EventPage.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class Home extends StatefulWidget {
+  static final String tag = '\Home';
   @override
   _HomeState createState() => _HomeState();
 }
@@ -50,7 +53,7 @@ class _HomeState extends State<Home> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
-          
+         Navigator.of(context).pushReplacementNamed('\Event');
         },
       ),
     );
