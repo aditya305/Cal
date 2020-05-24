@@ -24,8 +24,8 @@ class _EventState extends State<Event> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+
     _startDate = DateTime.now();
     _endDate = DateTime.now().add(Duration(hours: 1));
     _startTime = TimeOfDay(hour: _startDate.hour, minute: _startDate.minute);
@@ -37,12 +37,15 @@ class _EventState extends State<Event> {
   void _saveEvent() {
     final eventId = Uuid().v4();
     Firestore.instance.collection("events").document(eventId).setData({
-    'eventId': eventId,
-    'title': controllerTitle.text,
-    'description':controllerDescription.text,
-    'startDate': Timestamp.fromDate(_start),
-    'endDate':Timestamp.fromDate(_end),
-    });
+      'eventId': eventId,
+      'title': controllerTitle.text,
+      'description': controllerDescription.text,
+      'startDate': Timestamp.fromDate(_start),
+      'endDate': Timestamp.fromDate(_end),
+      'allDay': allDay,
+    }).then(
+      (value) => print('Event Saved!'),
+    );
   }
 
   @override
@@ -129,6 +132,7 @@ class _EventState extends State<Event> {
                 RaisedButton(
                   onPressed: _saveEvent,
                   child: Text('Save'),
+                  color: Colors.blue,
                 ),
               ],
             ),
@@ -145,7 +149,7 @@ class _EventState extends State<Event> {
   }) {
     if (date == null && time == null) return null;
     final dateWithoutTime =
-    DateTime.parse(DateFormat("y-MM-dd 00:00:00").format(date));
+        DateTime.parse(DateFormat("y-MM-dd 00:00:00").format(date));
     return dateWithoutTime
         .add(Duration(hours: time.hour, minutes: time.minute));
   }
